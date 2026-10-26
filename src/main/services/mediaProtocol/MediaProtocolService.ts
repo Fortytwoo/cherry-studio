@@ -7,6 +7,7 @@ import { loggerService } from '@logger'
 import { BaseService, Injectable, Phase, ServicePhase } from '@main/core/lifecycle'
 import { isAppRendererUrl } from '@main/core/security/validateSender'
 
+import { type FileVideoEntry, serveFileVideo } from './fileVideo'
 import { CHERRY_MEDIA_SCHEME, MEDIA_KINDS, type MediaEntry, type MediaKind } from './types'
 
 const logger = loggerService.withContext('MediaProtocolService')
@@ -30,6 +31,13 @@ const logger = loggerService.withContext('MediaProtocolService')
 @ServicePhase(Phase.WhenReady)
 export class MediaProtocolService extends BaseService {
   private stores = new Map<MediaKind, Map<string, MediaEntry>>()
+  private videos = new Map<string, FileVideoEntry>()
+
+  storeVideo(entry: Omit<FileVideoEntry, 'lifetime'>): string {
+    const id = randomUUID()
+    this.videos.set(id, { ...entry, lifetime: new AbortController() })
+    return id
+  }
 
   protected async onInit(): Promise<void> {
     // `protocol.handle` requires an app-ready process, hence Phase.WhenReady.
@@ -38,7 +46,10 @@ export class MediaProtocolService extends BaseService {
       { urls: [`${CHERRY_MEDIA_SCHEME}://*/*`] },
       (details, callback) => {
         const url = new URL(details.url)
-        const entry = this.stores.get(url.hostname as MediaKind)?.get(url.pathname.slice(1))
+        const entry =
+          url.hostname === 'video'
+            ? this.videos.get(url.pathname.slice(1))
+            : this.stores.get(url.hostname as MediaKind)?.get(url.pathname.slice(1))
         const access = entry?.access
         callback({
           cancel: Boolean(
@@ -54,6 +65,9 @@ export class MediaProtocolService extends BaseService {
     this.registerDisposable(() => session.defaultSession.webRequest.onBeforeRequest(null))
     this.registerDisposable(() => protocol.unhandle(CHERRY_MEDIA_SCHEME))
     this.registerDisposable(() => this.stores.clear())
+    this.registerDisposable(() => {
+      for (const id of this.videos.keys()) this.remove('video', id)
+    })
     logger.info('Media protocol handler registered', { scheme: CHERRY_MEDIA_SCHEME })
   }
 
@@ -74,6 +88,10 @@ export class MediaProtocolService extends BaseService {
 
   /** Remove an entry. Returns whether it existed. */
   remove(kind: MediaKind, id: string): boolean {
+    if (kind === 'video') {
+      this.videos.get(id)?.lifetime.abort()
+      return this.videos.delete(id)
+    }
     return this.stores.get(kind)?.delete(id) ?? false
   }
 
@@ -82,7 +100,7 @@ export class MediaProtocolService extends BaseService {
     return `${CHERRY_MEDIA_SCHEME}://${kind}/${id}`
   }
 
-  private handleRequest(request: Request): Response {
+  private handleRequest(request: Request): Response | Promise<Response> {
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } })
     }
@@ -99,6 +117,10 @@ export class MediaProtocolService extends BaseService {
       return new Response('Missing media id', { status: 400 })
     }
 
+    if (kind === 'video') {
+      const video = this.videos.get(id)
+      return video ? serveFileVideo(request, video) : new Response('Not found', { status: 404 })
+    }
     const entry = this.stores.get(kind as MediaKind)?.get(id)
     if (!entry) {
       return new Response('Not found', { status: 404 })

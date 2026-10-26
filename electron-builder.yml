@@ -1,5 +1,5 @@
-appId: com.kangfenmao.CherryStudio
-productName: Cherry Studio
+appId: local.yoyoking.studio
+productName: Yoyoking Studio
 extraMetadata:
   cherryEdition: global
 electronLanguages:
@@ -18,7 +18,7 @@ directories:
 protocols:
   - name: Cherry Studio
     schemes:
-      - cherrystudio
+      - yoyokingstudio
 files:
   - "**/*"
   - "!**/node_modules/@anthropic-ai/claude-agent-sdk-*/**"
@@ -108,6 +108,8 @@ asarUnpack:
   - "node_modules/node-screenshots-*/**" # native N-API binary must be unpacked for runtime loading
   - "node_modules/node-mac-permissions/**" # native N-API binary must be unpacked for runtime loading
 extraResources:
+  - from: resources/yoyoking
+    to: yoyoking
   - from: "src/main/ai/voice/localAdapters/NOTICE.txt"
     to: "voice-audio/NOTICE.txt"
   - from: "migrations/sqlite-drizzle"
@@ -115,7 +117,7 @@ extraResources:
   - from: "packages/provider-registry/data"
     to: "provider-registry"
 win:
-  executableName: Cherry Studio
+  executableName: Yoyoking Studio
   artifactName: ${productName}-${version}-${arch}-setup.${ext}
   extraResources:
     # before-pack adds system-speech only for x64; extraResources .exe files use signtoolOptions below.
@@ -130,8 +132,8 @@ win:
     - .node
   verifyUpdateCodeSignature: false
 nsis:
-  # Preserve the existing global installer identity so either edition replaces the same Windows installation.
-  guid: 41a4ccd8-bcc0-5710-9eee-0e164da68057
+  # Both derivative editions share their own installer identity, separate from Cherry Studio.
+  guid: 813bc528-34ca-4b1a-9d12-ac96599c74a6
   artifactName: ${productName}-${version}-${arch}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
@@ -186,10 +188,7 @@ rpm:
   # Workaround for electron build issue on rpm package:
   # https://github.com/electron/forge/issues/3594
   fpm: ["--rpm-rpmbuild-define=_build_id_links none"]
-publish:
-  provider: generic
-  url: https://releases.cherry-ai.com
-  useMultipleRangeRequest: false
+publish: null
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
 beforePack: scripts/packaging/before-pack.js

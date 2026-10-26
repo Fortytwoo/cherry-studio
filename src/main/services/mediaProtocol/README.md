@@ -1,6 +1,6 @@
 # mediaProtocol
 
-Serves in-memory binary media to renderer processes over the custom `cherry-media://` scheme, so a renderer can read large bytes the main process already holds without an IPC copy or a temp file on disk.
+Serves owned binary media to renderer processes over the custom `cherry-media://` scheme. Images and audio use in-memory entries; videos use authorized file-backed streams without reading an entire MP4 into memory or copying it across IPC.
 
 The first consumer is the screenshot overlay: each display's full-screen capture is tens of MB, and the overlay both paints it and re-reads regions of it. Structured-cloning that through IPC, or round-tripping it via disk, costs more than the whole capture.
 
@@ -22,6 +22,7 @@ An unknown kind is a 400, not a fallthrough to another kind's store — ids are 
 | `types.ts` | `CHERRY_MEDIA_SCHEME`, `MediaKind` + `MEDIA_KINDS`, the internal `MediaEntry` shape |
 | `registerSchemes.ts` | `CHERRY_MEDIA_SCHEME_DECLARATION` — the pre-ready privilege declaration; `main.ts` passes it to the process's single `registerSchemesAsPrivileged` call together with the mini-app scheme |
 | `MediaProtocolService.ts` | the store and the `protocol.handle` responder |
+| `fileVideo.ts` | realpath authorization, file identity rechecks and streaming video range responses |
 | `index.ts` | barrel — the only import surface for code outside this directory |
 
 ## Two-phase registration
@@ -91,6 +92,9 @@ They share only the word. Merging them would put a preboot-timed Chromium scheme
 | `store(kind, data, mimeType, access?)` | stores the buffer, returns its id. Caller owns the lifetime |
 | `remove(kind, id)` | drops the entry; returns whether it existed |
 | `getUrl(kind, id)` | the URL a renderer loads |
+| `storeVideo({path, roots, mimeType, access})` | registers a file-backed video; `access.webContentsId` is required and each request rechecks the allowed real paths |
+
+Video entries support GET, HEAD and single byte ranges with the same 206/416 behavior as audio. File identity is checked across open and path resolution; sibling-prefix and directory-link escapes fail closed. `remove('video', id)` aborts outstanding streams and rejects new reads. Yoyoking owns preview entries and releases their window listeners when a preview closes or its window exits.
 
 ```typescript
 import { MediaKind } from '@main/services/mediaProtocol'

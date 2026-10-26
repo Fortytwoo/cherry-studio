@@ -92,6 +92,7 @@ const CHECK_RETRY_POLICY: RetryPolicy = {
 @ServicePhase(Phase.WhenReady)
 @DependsOn(['WindowManager', 'SchedulerService'])
 export class AppUpdaterService extends BaseService {
+  private readonly derivativeUpdatesEnabled: boolean = false
   private cancellationToken: CancellationToken = new CancellationToken()
   private updateCheckResult: UpdateCheckResult | null = null
   // Consecutive scheduled-check failures, drives backoff; reset on success.
@@ -226,6 +227,7 @@ export class AppUpdaterService extends BaseService {
   }
 
   private async fetchReleaseHistory(): Promise<ReleaseNotesEntry[] | null> {
+    if (!this.derivativeUpdatesEnabled) return null
     try {
       const { updateHeaders } = await this.getUpdateRequest()
       const response = await net.fetch(RELEASE_HISTORY_URL, {
@@ -260,7 +262,7 @@ export class AppUpdaterService extends BaseService {
     | { status: 'current'; currentVersion: string }
     | { status: 'available'; currentVersion: string; version: string }
   > {
-    if (this.isPortable()) return { status: 'unsupported' }
+    if (!this.derivativeUpdatesEnabled || this.isPortable()) return { status: 'unsupported' }
     const { currentVersion, updateChannel, updateHeaders } = await this.getUpdateRequest()
     const updater = new ReleaseNotesUpdater()
     updater.logger = logger as Logger
@@ -278,6 +280,7 @@ export class AppUpdaterService extends BaseService {
   }
 
   public async getLatestReleaseNotes(): Promise<ReleaseNotesEntry | null> {
+    if (!this.derivativeUpdatesEnabled) return null
     try {
       const { updateChannel, updateHeaders } = await this.getUpdateRequest()
       const updater = new ReleaseNotesUpdater()
@@ -337,6 +340,7 @@ export class AppUpdaterService extends BaseService {
    * broadcast (see `registerAutoUpdaterListeners`), not the return value.
    */
   private async performUpdateCheck() {
+    if (!this.derivativeUpdatesEnabled) return { currentVersion: app.getVersion(), updateInfo: null }
     void application.get('AnalyticsService').trackAppUpdate()
 
     if (this.isPortable()) {
@@ -418,6 +422,7 @@ export class AppUpdaterService extends BaseService {
   }
 
   public quitAndInstall() {
+    if (!this.derivativeUpdatesEnabled) throw new Error('Yoyoking Studio has no configured update channel')
     application.markQuitting()
     setImmediate(() => autoUpdater.quitAndInstall(true, true))
   }

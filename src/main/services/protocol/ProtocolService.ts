@@ -20,7 +20,7 @@ import { parseMcpInstallProtocolUrl } from './handlers/mcpInstall'
 import { handleNavigateProtocolUrl } from './handlers/navigate'
 import { handleProvidersProtocolUrl } from './handlers/providersImport'
 
-export const CHERRY_STUDIO_PROTOCOL = 'cherrystudio'
+export const CHERRY_STUDIO_PROTOCOL = 'yoyokingstudio'
 
 const DESKTOP_FILE_NAME = 'cherrystudio-url-handler.desktop'
 const execAsync = promisify(exec)

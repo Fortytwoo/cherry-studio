@@ -1,9 +1,9 @@
 {
-  "name": "CherryStudio",
+  "name": "YoyokingStudio",
   "version": "2.1.8",
   "private": true,
   "description": "A powerful AI assistant for producer.",
-  "homepage": "https://github.com/CherryHQ/cherry-studio",
+  "homepage": "https://github.com/Fortytwoo/cherry-studio/tree/yoyoking",
   "author": "support@cherry-ai.com",
   "main": "./out/main/main.js",
   "scripts": {
@@ -41,6 +41,8 @@
     "build:win:cn": "pnpm run build:cn && electron-builder --config electron-builder.cn.config.cjs --win --x64 --arm64",
     "build:win:x64": "dotenv pnpm run build && electron-builder --win --x64",
     "build:win:x64:cn": "pnpm run build:cn && electron-builder --config electron-builder.cn.config.cjs --win --x64",
+    "build:yoyoking": "pnpm prepare:yoyoking && electron-vite build && pnpm build:utility-process",
+    "build:yoyoking:native": "scripts\\build-yoyoking-native.cmd",
     "change:scope": "node scripts/docsGovernance/change-scope.mjs",
     "changeset": "changeset",
     "changeset:check": "node scripts/release/check-changesets.mjs",
@@ -60,6 +62,7 @@
     "dev": "pnpm prepare:system-speech && pnpm rebuild:electron && pnpm download:binaries && pnpm run build:utility-process && dotenv electron-vite dev",
     "dev:cn": "dotenv -v CHERRY_EDITION=cn -- pnpm dev",
     "dev:watch": "pnpm prepare:system-speech && pnpm rebuild:electron && pnpm download:binaries && pnpm run build:utility-process && dotenv electron-vite dev -- -w",
+    "dev:yoyoking": "pnpm prepare:yoyoking && electron-vite dev",
     "docs:affected": "node scripts/docsGovernance/find-affected-docs.mjs",
     "docs:check": "pnpm docs:check-links && pnpm docs:check-structure && pnpm docs:check-frontmatter && pnpm docs:check-notes && pnpm docs:check-pairing && pnpm docs:check-terminology && pnpm docs:check-index",
     "docs:check-frontmatter": "tsx scripts/docsGovernance/verify-doc-frontmatter.ts",
@@ -86,11 +89,13 @@
     "i18n:unused:check": "tsx scripts/i18n-check-unused.ts --fail-on-unused",
     "lint": "oxlint --deny-warnings && eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --cache",
     "lint:fix": "oxlint --fix && eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --cache",
+    "package:yoyoking": "node scripts/package-yoyoking.mjs",
     "packages:build": "pnpm --filter @cherrystudio/provider-registry build && pnpm --filter @cherrystudio/ai-sdk-provider build && pnpm --filter @cherrystudio/ai-core build && pnpm --filter @cherrystudio/extension-table-plus build && pnpm --filter @cherrystudio/remote-protocol build && pnpm --filter @cherrystudio/remote-transport build && pnpm --filter @cherrystudio/file-preview build && pnpm --filter @cherrystudio/system-speech build && pnpm --filter @cherrystudio/web-search build",
     "packages:release": "pnpm packages:build && changeset publish",
     "postinstall": "pnpm --filter @cherrystudio/remote-protocol build && pnpm --filter @cherrystudio/remote-transport build && pnpm --filter @cherrystudio/system-speech build",
     "prepare": "git config blame.ignoreRevsFile .git-blame-ignore-revs && node -e \"process.env.CI||require('child_process').execSync('prek install',{stdio:'inherit'})\"",
     "prepare:system-speech": "pnpm --filter @cherrystudio/system-speech prepare:native",
+    "prepare:yoyoking": "node scripts/prepare-yoyoking-runtime.mjs",
     "pretest": "pnpm rebuild:node",
     "pretest:main": "pnpm rebuild:node",
     "rebuild:electron": "install-electron && electron-rebuild --force --only better-sqlite3",
@@ -98,6 +103,7 @@
     "skills:check": "tsx scripts/skills-check.ts",
     "skills:sync": "tsx scripts/skills-sync.ts",
     "smoke:utility-process": "tsx scripts/utility-process-smoke/run.ts",
+    "smoke:yoyoking": "node scripts/yoyoking-smoke.mjs",
     "start": "pnpm prepare:system-speech && pnpm rebuild:electron && electron-vite preview",
     "start:cn": "dotenv -v CHERRY_EDITION=cn -- pnpm start",
     "styles:canonical": "tsx scripts/fix-tailwind-canonical-classes.ts",
@@ -594,5 +600,6 @@
     "node": ">=24.12.0"
   },
   "packageManager": "pnpm@12.6.0+sha512.3ef68f951cb111ac204b4a5a16f0b2ddf0da56a96e0413e81d855d9f0b55ef926714709028e1cd00c405c2c5fb7b9e8ec4dc46777c805d0373c2f2ff00fd20ec",
-  "desktopName": "CherryStudio.desktop"
+  "desktopName": "CherryStudio.desktop",
+  "productName": "Yoyoking Studio"
 }

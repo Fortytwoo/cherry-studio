@@ -51,6 +51,7 @@ function getConversationSearchParamFromUrl(url: string, name: string): string | 
  * Order here is the canonical sidebar order and drives preference defaults.
  */
 const SIDEBAR_APP_DEFINITIONS = [
+  { id: 'yoyoking', routePrefix: '/app/yoyoking' },
   {
     id: 'agents',
     routePrefix: '/app/agents',

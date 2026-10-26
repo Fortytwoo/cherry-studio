@@ -272,6 +272,8 @@ interface AgentRightPaneActions {
 }
 
 interface AgentRightPanelScope {
+  editingAgentId?: string
+  editingTitle: string
   browserTitle: string
   developerMode: boolean
   filePreviewSelection: ArtifactPaneFileSelection | null
@@ -942,8 +944,11 @@ function AgentRightPaneStateProvider({
       workspaceType
     ]
   )
+  const [editingInstallation] = usePreference('feature.yoyoking.installation')
   const scope = useMemo<AgentRightPanelScope>(
     () => ({
+      editingAgentId: editingInstallation.agentId,
+      editingTitle: t('yoyoking.title'),
       browserTitle: t('agent.right_pane.tabs.browser'),
       developerMode: enableDeveloperMode,
       filePreviewSelection: previewFileSelection,
@@ -958,6 +963,7 @@ function AgentRightPaneStateProvider({
       traceTitle: t('trace.label')
     }),
     [
+      editingInstallation.agentId,
       enableDeveloperMode,
       flowTab,
       previousFlowTab,
@@ -978,7 +984,9 @@ function AgentRightPaneStateProvider({
             <RightPanelProvider
               capabilities={AGENT_RIGHT_PANEL_CAPABILITIES}
               scope={scope}
-              defaultPanelId={RESOURCE_PANE_TAB}
+              defaultPanelId={
+                meta.agentId === editingInstallation.agentId && !!meta.agentId ? 'yoyoking' : RESOURCE_PANE_TAB
+              }
               defaultOpen={defaultOpen}
               onOpenChange={onOpenChange}
               userOpenIntentSeq={userOpenIntentSeq}
@@ -1746,7 +1754,29 @@ const AGENT_BROWSER_PANE_CAPABILITY = {
     canMaximize: true
   })
 } satisfies RightPanelCapability<AgentRightPanelScope>
+const YoyokingWorkbench = lazy(() => import('@renderer/components/yoyoking/YoyokingWorkbench'))
+function AgentYoyokingRightPanel() {
+  return (
+    <Suspense>
+      <YoyokingWorkbench />
+    </Suspense>
+  )
+}
 const AGENT_RIGHT_PANEL_CAPABILITIES = [
+  {
+    component: AgentYoyokingRightPanel,
+    resolve: (scope) =>
+      scope.meta.agentId && scope.meta.agentId === scope.editingAgentId
+        ? {
+            id: 'yoyoking',
+            instanceKey: `yoyoking:${scope.meta.sessionId ?? ''}`,
+            title: scope.editingTitle,
+            readiness: 'ready',
+            headerMode: 'content',
+            canMaximize: true
+          }
+        : null
+  },
   AGENT_RESOURCE_PANE_CAPABILITY,
   {
     component: AgentRightPaneFilesPanel,

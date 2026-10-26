@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-26",
+  "status": "complete_source_delivery_verified_runtime_acceptance_partial",
+  "repository": "https://github.com/Fortytwoo/cherry-studio",
+  "branch": "yoyoking",
+  "upstreamCommit": "de8d659dbe23753fe62e86330483c10c88007566",
+  "sourceLayout": {
+    "fullCherrySourceIncluded": true,
+    "backendSource": "vendor/jy-draftc",
+    "siblingCheckoutRequired": false,
+    "patchReconstructionRequired": false,
+    "submoduleRequired": false
+  },
+  "checks": {
+    "nativeBuildFromIncludedSource": true,
+    "appAndUtilityProcessBuild": true,
+    "freshIndexCheckoutNativeBuild": true,
+    "freshIndexCheckoutRuntimeIntegrity": true,
+    "runtimeManifestFiles": 36,
+    "backendTestsPassed": 201,
+    "backendOptInTestsSkipped": 3,
+    "nativeReaderSelectionAndWin32TestsPassed": 9,
+    "documentationGate": true,
+    "actualElectronStarted": true,
+    "editingToolsDiscovered": 71,
+    "editingSkillsInstalled": 3,
+    "hostToolsDiscovered": 5,
+    "nativeFixtureAttachedAndRestored": true,
+    "managedDouyinSdkStarted": true,
+    "oauthMetadataRead": true,
+    "rendererErrors": [],
+    "currentEndToEndExportPassed": false
+  },
+  "exportFailure": {
+    "errorCode": "EXPORT_TIMEOUT",
+    "stage": "native draft restore",
+    "attempts": 2,
+    "oldBinaryBoundedControl": "also timed out during native draft restore",
+    "rootCause": "not determined"
+  },
+  "pending": [
+    "resolve native export timeout and repeat output and playback acceptance",
+    "real model conversation and Skill execution",
+    "real Jianying project input, playback, save/reopen and cross-screen acceptance",
+    "official Douyin account authorization, business reads, download and Excel output",
+    "Windows distribution build and packaged execution; local ATL component missing"
+  ]
+}

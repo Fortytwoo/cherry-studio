@@ -22,6 +22,7 @@ import { Route as AppLaunchpadRouteImport } from './routes/app/launchpad'
 import { Route as AppNotesRouteImport } from './routes/app/notes'
 import { Route as AppReleaseNotesRouteImport } from './routes/app/release-notes'
 import { Route as AppTranslateRouteImport } from './routes/app/translate'
+import { Route as AppYoyokingRouteImport } from './routes/app/yoyoking'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsAboutRouteImport } from './routes/settings/about'
 import { Route as SettingsApiGatewayRouteImport } from './routes/settings/api-gateway'
@@ -136,6 +137,11 @@ const AppReleaseNotesRoute = AppReleaseNotesRouteImport.update({
 const AppTranslateRoute = AppTranslateRouteImport.update({
   id: '/translate',
   path: '/translate',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppYoyokingRoute = AppYoyokingRouteImport.update({
+  id: '/yoyoking',
+  path: '/yoyoking',
   getParentRoute: () => AppRoute,
 } as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
@@ -408,6 +414,7 @@ export interface FileRoutesByFullPath {
   '/app/notes': typeof AppNotesRoute
   '/app/release-notes': typeof AppReleaseNotesRoute
   '/app/translate': typeof AppTranslateRoute
+  '/app/yoyoking': typeof AppYoyokingRoute
   '/settings/about': typeof SettingsAboutRoute
   '/settings/api-gateway': typeof SettingsApiGatewayRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -472,6 +479,7 @@ export interface FileRoutesByTo {
   '/app/notes': typeof AppNotesRoute
   '/app/release-notes': typeof AppReleaseNotesRoute
   '/app/translate': typeof AppTranslateRoute
+  '/app/yoyoking': typeof AppYoyokingRoute
   '/settings/about': typeof SettingsAboutRoute
   '/settings/api-gateway': typeof SettingsApiGatewayRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -535,6 +543,7 @@ export interface FileRoutesById {
   '/app/notes': typeof AppNotesRoute
   '/app/release-notes': typeof AppReleaseNotesRoute
   '/app/translate': typeof AppTranslateRoute
+  '/app/yoyoking': typeof AppYoyokingRoute
   '/settings/about': typeof SettingsAboutRoute
   '/settings/api-gateway': typeof SettingsApiGatewayRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -602,6 +611,7 @@ export interface FileRouteTypes {
     | '/app/notes'
     | '/app/release-notes'
     | '/app/translate'
+    | '/app/yoyoking'
     | '/settings/about'
     | '/settings/api-gateway'
     | '/settings/appearance'
@@ -666,6 +676,7 @@ export interface FileRouteTypes {
     | '/app/notes'
     | '/app/release-notes'
     | '/app/translate'
+    | '/app/yoyoking'
     | '/settings/about'
     | '/settings/api-gateway'
     | '/settings/appearance'
@@ -728,6 +739,7 @@ export interface FileRouteTypes {
     | '/app/notes'
     | '/app/release-notes'
     | '/app/translate'
+    | '/app/yoyoking'
     | '/settings/about'
     | '/settings/api-gateway'
     | '/settings/appearance'
@@ -876,6 +888,13 @@ declare module '@tanstack/react-router' {
       path: '/translate'
       fullPath: '/app/translate'
       preLoaderRoute: typeof AppTranslateRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/yoyoking': {
+      id: '/app/yoyoking'
+      path: '/yoyoking'
+      fullPath: '/app/yoyoking'
+      preLoaderRoute: typeof AppYoyokingRouteImport
       parentRoute: typeof AppRoute
     }
     '/settings/': {
@@ -1243,6 +1262,7 @@ interface AppRouteChildren {
   AppNotesRoute: typeof AppNotesRoute
   AppReleaseNotesRoute: typeof AppReleaseNotesRoute
   AppTranslateRoute: typeof AppTranslateRoute
+  AppYoyokingRoute: typeof AppYoyokingRoute
   AppMiniAppAppIdRoute: typeof AppMiniAppAppIdRoute
   AppPaintingsSplatRoute: typeof AppPaintingsSplatRoute
   AppMiniAppIndexRoute: typeof AppMiniAppIndexRoute
@@ -1261,6 +1281,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotesRoute: AppNotesRoute,
   AppReleaseNotesRoute: AppReleaseNotesRoute,
   AppTranslateRoute: AppTranslateRoute,
+  AppYoyokingRoute: AppYoyokingRoute,
   AppMiniAppAppIdRoute: AppMiniAppAppIdRoute,
   AppPaintingsSplatRoute: AppPaintingsSplatRoute,
   AppMiniAppIndexRoute: AppMiniAppIndexRoute,

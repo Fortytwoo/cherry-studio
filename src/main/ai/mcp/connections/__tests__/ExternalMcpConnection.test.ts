@@ -58,6 +58,24 @@ beforeEach(() => {
 })
 
 describe('ExternalMcpConnection transport fallback policy', () => {
+  it('discovers tools through an injected memory-only authenticated transport without using the default fetch', async () => {
+    const handler = createLegacyHandler()
+    const authenticatedFetch: typeof fetch = (input, init) => fetchMcpHandler(handler, input, init)
+    const connection = await createExternalMcpConnection({
+      server: { ...server, headers: undefined },
+      appVersion: '1',
+      events,
+      log: createLog(),
+      connectTimeoutMs: 5000,
+      authenticatedFetch
+    })
+    try {
+      expect((await connection.listTools()).map((tool) => tool.name)).toContain('mx_quote')
+      expect(fetchMock).not.toHaveBeenCalled()
+    } finally {
+      await connection.close()
+    }
+  })
   it('coalesces authorization before credentials can be overwritten and releases failed attempts', async () => {
     const coordinator = new McpOAuthCoordinator()
     const controller = new AbortController()

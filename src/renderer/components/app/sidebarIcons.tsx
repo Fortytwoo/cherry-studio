@@ -14,7 +14,8 @@ import {
   MousePointerClick,
   NotepadText,
   Package,
-  Palette
+  Palette,
+  Film
 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -31,6 +32,7 @@ const CodeMateIcon: SidebarIconComponent = (props) => <Code {...props} viewBox="
  * components; the navigation data and logic live in `@renderer/utils/sidebar`.
  */
 export const SIDEBAR_ICON_COMPONENTS = {
+  yoyoking: Film,
   assistants: MessageSquare,
   agents: MousePointerClick,
   paintings: Palette,

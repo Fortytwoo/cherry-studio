@@ -47,6 +47,7 @@ import { type VoiceEventSchemas, voiceRequestSchemas } from './voice'
 import { webSearchRequestSchemas } from './webSearch'
 import { type WebviewEventSchemas, webviewRequestSchemas } from './webview'
 import { type WindowEventSchemas, windowRequestSchemas } from './window'
+import { yoyokingRequestSchemas } from './yoyoking'
 
 /**
  * Global request registry — the single source of truth the main router parses
@@ -56,6 +57,7 @@ import { type WindowEventSchemas, windowRequestSchemas } from './window'
  * never enter the renderer bundle (see ipc-overview.md, "zod across processes").
  */
 export const ipcRequestSchemas = {
+  ...yoyokingRequestSchemas,
   ...aiRequestSchemas,
   ...voiceRequestSchemas,
   ...apiGatewayRequestSchemas,
@@ -115,7 +117,7 @@ export type IpcRoute = keyof IpcRequestSchemas
  * the renderer trusts them and never re-parses). Each migrated domain intersects
  * its own `*EventSchemas` type here.
  */
-export type IpcEventSchemas = AiEventSchemas &
+export type IpcEventSchemas = { 'yoyoking.preview.requested': { path: string } } & AiEventSchemas &
   ApiGatewayEventSchemas &
   AppEventSchemas &
   BackupEventSchemas &

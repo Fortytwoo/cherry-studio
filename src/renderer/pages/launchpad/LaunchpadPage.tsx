@@ -39,6 +39,7 @@ const APP_ICON_CLASS = 'size-11 object-contain'
 const SORTABLE_CONTENTS_STYLE = { display: 'contents' } as const
 
 const APP_ICON_SOURCES: Record<SidebarAppId, string> = {
+  yoyoking: filesIcon,
   assistants: assistantsIcon,
   agents: agentsIcon,
   paintings: paintingsIcon,

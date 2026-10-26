@@ -176,6 +176,7 @@ const titleKeyMap = {
   knowledge: 'title.knowledge',
   launchpad: 'title.launchpad',
   'mcp-servers': 'title.mcp-servers',
+  yoyoking: 'yoyoking.title',
   notes: 'title.notes',
   paintings: 'title.paintings',
   settings: 'title.settings',
@@ -206,6 +207,7 @@ const sidebarIconKeyMap = {
   knowledge: 'knowledge.title',
   files: 'files.title',
   code_tools: 'code.title',
+  yoyoking: 'yoyoking.title',
   notes: 'notes.title'
 } as const
 
@@ -217,6 +219,7 @@ export const getSidebarIconLabelKey = (key: string): string => {
 // the old one, but main's `components/app/Sidebar` still calls it. Kept until the
 // chat carve brings feat's Sidebar; remove together with that.
 const sidebarFavoriteKeyMap = {
+  yoyoking: 'yoyoking.title',
   assistants: 'assistants.title',
   agents: 'title.work',
   store: 'assistants.presets.title',

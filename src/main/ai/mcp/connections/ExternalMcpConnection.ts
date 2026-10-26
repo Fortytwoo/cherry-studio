@@ -101,7 +101,8 @@ export async function createExternalMcpConnection({
   allowInteractiveAuthorization = true,
   authorizationWindowId,
   onAuthorizationStarted,
-  signal
+  signal,
+  authenticatedFetch
 }: {
   server: McpServer
   appVersion: string
@@ -113,12 +114,13 @@ export async function createExternalMcpConnection({
   authorizationWindowId?: string
   onAuthorizationStarted?: () => void
   signal?: AbortSignal
+  authenticatedFetch?: typeof globalThis.fetch
 }): Promise<McpConnection> {
   const authProvider = new McpOAuthClientProvider({
     serverUrlHash: oauthServerUrlHash(server.baseUrl || '')
   })
   const headers = mergeHeaders(defaultAppHeaders(), server.headers)
-  const useOAuth = !('authorization' in headers)
+  const useOAuth = !authenticatedFetch && !('authorization' in headers)
   const args = [...(server.args || [])]
   const lifetime = new AbortController()
   type AuthOperation = { signal: AbortSignal; lease?: McpAuthorizationLease }
@@ -157,7 +159,7 @@ export async function createExternalMcpConnection({
       if (type === 'streamableHttp') {
         return wrapOAuthTransport(
           new StreamableHTTPClientTransport(new URL(server.baseUrl), {
-            fetch: (input, init) => net.fetch(input.toString(), init),
+            fetch: authenticatedFetch ?? ((input, init) => net.fetch(input.toString(), init)),
             requestInit: { headers },
             ...(useOAuth ? { authProvider } : {})
           })
@@ -166,7 +168,7 @@ export async function createExternalMcpConnection({
       if (type === 'sse') {
         return wrapOAuthTransport(
           new SSEClientTransport(new URL(server.baseUrl), {
-            fetch: (input, init) => net.fetch(input.toString(), init),
+            fetch: authenticatedFetch ?? ((input, init) => net.fetch(input.toString(), init)),
             requestInit: { headers },
             ...(useOAuth ? { authProvider } : {})
           })

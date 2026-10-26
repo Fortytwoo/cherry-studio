@@ -100,6 +100,18 @@ export function buildPathRegistry() {
       ? path.join(appExtraResources, 'migrations/sqlite-drizzle')
       : path.join(__dirname, '../../migrations/sqlite-drizzle'),
 
+    'feature.yoyoking.runtime': app.isPackaged
+      ? path.join(appExtraResources, 'yoyoking')
+      : path.join(appRootResources, 'yoyoking'),
+    'feature.yoyoking.workspace': path.join(appUserDataData, 'Yoyoking'),
+    'feature.yoyoking.python_env': path.join(appUserDataRuntime, 'yoyoking-python'),
+    'feature.yoyoking.snapshots': path.join(appUserDataData, 'Yoyoking', 'native-snapshots'),
+    'feature.yoyoking.douyin_sdk': path.join(
+      getUserSystemPath('documents', path.join(sysHome, 'Documents')),
+      'DouyinCreatorSDK'
+    ),
+    'feature.yoyoking.jianying_userdata': path.join(app.getPath('appData'), '..', 'Local', 'JianyingPro', 'User Data'),
+
     // -- D. feature.* — grouped by feature, physical location is irrelevant --
     'feature.selection.native_panel_file': path.join(
       appRootResources,

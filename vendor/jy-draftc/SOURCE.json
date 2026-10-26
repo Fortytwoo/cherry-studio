@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/Fortytwoo/jy-draftc",
+  "commit": "930319424901dac3b01d2edae8ad230f4bac2e14",
+  "nativeCompatibilityFix": "Compare the engine structural version with the draft declaration in self-check.",
+  "layout": "Source included in the Cherry Studio derivative; no external checkout or submodule is required."
+}

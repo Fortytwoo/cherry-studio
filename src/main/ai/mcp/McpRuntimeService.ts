@@ -225,6 +225,35 @@ async function clampToolResultImages(
 @ServicePhase(Phase.WhenReady)
 @DependsOn(['WindowManager', 'McpPackageService', 'BrowserSessionService'])
 export class McpRuntimeService extends BaseService {
+  private ephemeralTransports = new Map<string, typeof globalThis.fetch>()
+  private ephemeralEndpoints = new Map<string, () => Promise<import('./servers/factory').BuiltinMcpEndpoint>>()
+
+  registerAuthenticatedTransport(serverId: string, fetch: typeof globalThis.fetch): () => Promise<void> {
+    if (this.ephemeralTransports.has(serverId)) throw new Error('Authenticated transport already registered')
+    this.ephemeralTransports.set(serverId, fetch)
+    this.connectFailures.delete(this.getServerKey(this.getServerById(serverId)))
+    application.get('McpCatalogService').clearSharedToolsCache(serverId)
+    return async () => {
+      if (this.ephemeralTransports.get(serverId) !== fetch) return
+      this.ephemeralTransports.delete(serverId)
+      await this.stopServer(serverId)
+    }
+  }
+
+  registerLocalEndpoint(
+    serverId: string,
+    factory: () => Promise<import('./servers/factory').BuiltinMcpEndpoint>
+  ): () => Promise<void> {
+    if (this.ephemeralEndpoints.has(serverId)) throw new Error('Local endpoint already registered')
+    this.ephemeralEndpoints.set(serverId, factory)
+    this.connectFailures.delete(this.getServerKey(this.getServerById(serverId)))
+    application.get('McpCatalogService').clearSharedToolsCache(serverId)
+    return async () => {
+      if (this.ephemeralEndpoints.get(serverId) !== factory) return
+      this.ephemeralEndpoints.delete(serverId)
+      await this.stopServer(serverId)
+    }
+  }
   private connections = new Map<string, McpConnection>()
   private pendingConnections = new Map<string, Promise<McpConnection>>()
   private pendingConnectionControllers = new Map<string, AbortController>()
@@ -261,6 +290,8 @@ export class McpRuntimeService extends BaseService {
 
   protected async onStop(): Promise<void> {
     this.stopping = true
+    this.ephemeralTransports.clear()
+    this.ephemeralEndpoints.clear()
     this.connectionGenerations.clear()
     this.oauthCoordinator.close()
     this.abortActiveToolCalls()
@@ -380,19 +411,25 @@ export class McpRuntimeService extends BaseService {
     this.connectionGenerations.set(this.getServerKey(server), generation)
     const events = this.connectionEvents(server, generation)
 
-    if (mcpTransportKind(server) === 'inMemory') {
+    const localEndpoint = this.ephemeralEndpoints.get(server.id)
+    if (localEndpoint || mcpTransportKind(server) === 'inMemory') {
       return createInProcessMcpConnection({
         appVersion: app.getVersion(),
-        endpoint: await createBuiltinMcpEndpoint(
-          server.name as BuiltinMcpServerName,
-          [...(server.args || [])],
-          server.env || {}
-        ),
+        endpoint: localEndpoint
+          ? await localEndpoint()
+          : await createBuiltinMcpEndpoint(
+              server.name as BuiltinMcpServerName,
+              [...(server.args || [])],
+              server.env || {}
+            ),
         events,
         connectTimeoutMs
       })
     }
 
+    const authenticatedFetch = this.ephemeralTransports.get(server.id)
+    if (server.tags?.includes('ephemeral-auth') && !authenticatedFetch)
+      throw new UnauthorizedError('Explicit account authorization is required')
     return createExternalMcpConnection({
       server: resolveBuiltinExternalMcpServer(server),
       oauthCoordinator: this.oauthCoordinator,
@@ -400,6 +437,7 @@ export class McpRuntimeService extends BaseService {
       authorizationWindowId: requestContext?.windowId,
       onAuthorizationStarted: () => this.setServerStatus(server.id, 'connecting', undefined, true),
       signal,
+      authenticatedFetch,
       appVersion: app.getVersion(),
       events,
       connectTimeoutMs,

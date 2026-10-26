@@ -11,6 +11,8 @@ sources:
 
 # App Update Architecture
 
+The Yoyoking derivative disables the upstream update check, download and installation entry points in `AppUpdaterService`. Its independent application identity and manual Windows build are documented in the [Yoyoking guide](../../YOYOKING.md). The managed release-service flow below describes the upstream application; this fork does not use that distribution channel.
+
 ## Overview
 
 Cherry Studio clients check for updates through the managed release service at `https://releases.cherry-ai.com`. The client selects an edition-specific update channel and sends application, edition, client, platform, and region metadata. The release service owns target-version selection, regional mirrors, rollout policy, and required upgrade gateways.

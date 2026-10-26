@@ -296,11 +296,30 @@
       "targetKey": "ui.sidebar.favorites",
       "type": "PreferenceTypes.SidebarFavoriteItem[]",
       "defaultValue": [
-        { "id": "agents", "type": "app" },
-        { "id": "assistants", "type": "app" },
-        { "id": "translate", "type": "app" },
-        { "id": "paintings", "type": "app" },
-        { "id": "knowledge", "type": "app" }
+        {
+          "id": "yoyoking",
+          "type": "app"
+        },
+        {
+          "id": "agents",
+          "type": "app"
+        },
+        {
+          "id": "assistants",
+          "type": "app"
+        },
+        {
+          "id": "translate",
+          "type": "app"
+        },
+        {
+          "id": "paintings",
+          "type": "app"
+        },
+        {
+          "id": "knowledge",
+          "type": "app"
+        }
       ],
       "status": "classified",
       "description": "Legacy sidebar favorites, preserved as the source for shortcut migration"
@@ -310,28 +329,69 @@
       "type": "PreferenceTypes.SidebarShortcutItem[]",
       "defaultValue": [
         {
+          "id": "sidebar-shortcut:core.app:yoyoking",
+          "target": {
+            "kind": "resource",
+            "locator": {
+              "providerId": "core.app",
+              "resourceId": "yoyoking"
+            }
+          },
+          "type": "shortcut"
+        },
+        {
           "id": "sidebar-shortcut:core.app:agents",
-          "target": { "kind": "resource", "locator": { "providerId": "core.app", "resourceId": "agents" } },
+          "target": {
+            "kind": "resource",
+            "locator": {
+              "providerId": "core.app",
+              "resourceId": "agents"
+            }
+          },
           "type": "shortcut"
         },
         {
           "id": "sidebar-shortcut:core.app:assistants",
-          "target": { "kind": "resource", "locator": { "providerId": "core.app", "resourceId": "assistants" } },
+          "target": {
+            "kind": "resource",
+            "locator": {
+              "providerId": "core.app",
+              "resourceId": "assistants"
+            }
+          },
           "type": "shortcut"
         },
         {
           "id": "sidebar-shortcut:core.app:translate",
-          "target": { "kind": "resource", "locator": { "providerId": "core.app", "resourceId": "translate" } },
+          "target": {
+            "kind": "resource",
+            "locator": {
+              "providerId": "core.app",
+              "resourceId": "translate"
+            }
+          },
           "type": "shortcut"
         },
         {
           "id": "sidebar-shortcut:core.app:paintings",
-          "target": { "kind": "resource", "locator": { "providerId": "core.app", "resourceId": "paintings" } },
+          "target": {
+            "kind": "resource",
+            "locator": {
+              "providerId": "core.app",
+              "resourceId": "paintings"
+            }
+          },
           "type": "shortcut"
         },
         {
           "id": "sidebar-shortcut:core.app:knowledge",
-          "target": { "kind": "resource", "locator": { "providerId": "core.app", "resourceId": "knowledge" } },
+          "target": {
+            "kind": "resource",
+            "locator": {
+              "providerId": "core.app",
+              "resourceId": "knowledge"
+            }
+          },
           "type": "shortcut"
         }
       ],
@@ -689,7 +749,10 @@
       "targetKey": "shortcut.chat.input.focus",
       "type": "PreferenceTypes.PreferenceShortcutType",
       "defaultValue": {
-        "binding": ["CommandOrControl", "I"],
+        "binding": [
+          "CommandOrControl",
+          "I"
+        ],
         "enabled": true
       },
       "status": "classified",
@@ -1041,6 +1104,40 @@
       "defaultValue": "AltLeft+ControlLeft",
       "status": "classified",
       "description": "Physical key codes for application-local toggle dictation; empty disables the shortcut"
+    },
+    {
+      "targetKey": "feature.yoyoking.settings",
+      "type": "import('@shared/types/yoyoking').YoyokingSettings",
+      "defaultValue": {
+        "douyinEnabled": true,
+        "douyinSdkDirectory": "",
+        "jianyingExecutable": "",
+        "jianyingRuntime": "",
+        "mediaRoots": []
+      },
+      "status": "classified",
+      "description": "Editing workspace and user-selected runtime locations"
+    },
+    {
+      "targetKey": "feature.yoyoking.installation",
+      "type": "{ agentId?: string; douyinServerId?: string; editServerId?: string; hostServerId?: string }",
+      "defaultValue": {},
+      "status": "classified",
+      "description": "App-owned MCP and Agent identities, without credentials"
+    },
+    {
+      "targetKey": "app.dist.auto_update.enabled",
+      "type": "boolean",
+      "defaultValue": false,
+      "status": "classified",
+      "description": "Derivative updates remain disabled until its own distribution channel exists"
+    },
+    {
+      "targetKey": "app.privacy.data_collection.enabled",
+      "type": "boolean",
+      "defaultValue": false,
+      "status": "classified",
+      "description": "Do not enable upstream telemetry by default in the derivative"
     }
   ]
 }

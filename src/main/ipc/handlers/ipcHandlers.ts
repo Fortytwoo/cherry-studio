@@ -49,6 +49,7 @@ import { voiceHandlers } from './voice'
 import { webSearchHandlers } from './webSearch'
 import { webviewHandlers } from './webview'
 import { windowHandlers } from './window'
+import { yoyokingHandlers } from './yoyoking'
 
 /**
  * Global request handler map — exactly one handler per declared route, exhaustive
@@ -60,6 +61,7 @@ import { windowHandlers } from './window'
  * exposure surface.
  */
 export const ipcHandlers: IpcHandlersFor<IpcRequestSchemas> = {
+  ...yoyokingHandlers,
   ...aiHandlers,
   ...voiceHandlers,
   ...apiGatewayHandlers,

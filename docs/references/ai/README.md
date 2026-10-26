@@ -11,6 +11,8 @@ This is the entry point for Cherry Studio's AI pipeline: main-process provider
 calls, AI SDK chat execution, registered agent-session runtimes, and the
 renderer-side transport that connects to them.
 
+The [Yoyoking host integration](../../../src/main/features/yoyoking/README.md) uses the same MCP runtime for the editing backend and application-owned host tools. `registerLocalEndpoint` provides an owned local endpoint factory; `registerAuthenticatedTransport` provides an in-memory authenticated fetch implementation. Their revocation stops associated connections and clears catalog state. Account tokens are not persisted in MCP server headers.
+
 ## Quick navigation
 
 ### Top-level architecture

@@ -1,0 +1,5 @@
+# Bilingual-pair consistency record (docs/i18n/README.md).
+# After editing either side, update its counterpart and re-record with:
+#   pnpm docs:check-pairing --write .agents/notes/proposed/architecture/2026-10-26-yoyoking-desktop-integration.md
+2026-10-26-yoyoking-desktop-integration.md: 86fd1a1da692ef3d879e7f5dd1a3a931c9f9e691
+2026-10-26-yoyoking-desktop-integration.zh.md: 58622a51ce086d61491cdd429554e707fd1e4e44

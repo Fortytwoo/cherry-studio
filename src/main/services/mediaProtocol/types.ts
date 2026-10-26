@@ -8,7 +8,8 @@ export const CHERRY_MEDIA_SCHEME = 'cherry-media'
  */
 export const MediaKind = {
   Image: 'image',
-  Audio: 'audio'
+  Audio: 'audio',
+  Video: 'video'
 } as const
 
 export type MediaKind = (typeof MediaKind)[keyof typeof MediaKind]

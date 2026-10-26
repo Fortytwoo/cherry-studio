@@ -577,6 +577,7 @@ export default defineConfig([
   {
     ignores: [
       'node_modules/**',
+      'vendor/jy-draftc/**',
       'build/**',
       'dist/**',
       'out/**',

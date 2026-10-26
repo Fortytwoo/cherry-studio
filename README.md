@@ -1,4 +1,10 @@
 
+# Yoyoking Studio — Cherry Studio derivative
+
+本分支是基于 Cherry Studio 二次开发的完整桌面应用源码，已接入剪辑 MCP/Skill、视频预览、剪映工程联动与抖音账号服务。剪辑后端和原生工具源码位于 `vendor/jy-draftc/`，构建入口位于本仓库，不依赖外部 `jy-draftc` checkout 或补丁还原。开发步骤、验证结果和待完成项见 [Yoyoking Studio 开发指南](YOYOKING.md)。
+
+This branch contains the complete Cherry Studio desktop source and history, with the editing backend, native tools and Skills included under `vendor/jy-draftc/`. See the [Yoyoking development guide](YOYOKING.md) for build instructions and acceptance boundaries. The original upstream introduction and license remain below.
+
 <h1 align="center">
   <a href="https://github.com/CherryHQ/cherry-studio/releases">
     <img src="https://github.com/CherryHQ/cherry-studio/blob/main/build/icon.png?raw=true" width="150" height="150" alt="banner" /><br>

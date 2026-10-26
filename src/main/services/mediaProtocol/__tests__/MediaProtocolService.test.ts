@@ -1,3 +1,6 @@
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { application } from '@application'
@@ -60,7 +63,7 @@ describe('MediaProtocolService', () => {
 
   it('rejects an unknown kind instead of falling through to another kind store', async () => {
     const id = service.store(MediaKind.Image, Buffer.from([9]), 'image/png')
-    const response = await handler(new Request(`cherry-media://video/${id}`))
+    const response = await handler(new Request(`cherry-media://unknown/${id}`))
     expect(response.status).toBe(400)
   })
 
@@ -111,11 +114,11 @@ describe('MediaProtocolService', () => {
   })
 
   it('restricts owned media to the trusted main frame of its issuing window', () => {
-    vi.mocked(application.getPath).mockReturnValue('/app')
+    vi.mocked(application.getPath).mockReturnValue(process.cwd())
     const id = service.store(MediaKind.Audio, Buffer.from([1]), 'audio/wav', { webContentsId: 7 })
     const url = service.getUrl(MediaKind.Audio, id)
     const check = beforeRequestMock.mock.calls[0][1]
-    const main = { url: 'file:///app/renderer/index.html', top: undefined as unknown }
+    const main = { url: pathToFileURL(join(process.cwd(), 'out/renderer/index.html')).href, top: undefined as unknown }
     main.top = main
     function allowed(webContentsId: number | undefined, frame: unknown) {
       let cancelled: boolean | undefined
